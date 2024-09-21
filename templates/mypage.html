@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 페이지</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa, #e0e0e0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            animation: fadeIn 1s ease-in-out;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .btn-xs {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        .memo-item {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            background-color: #ffffff;
+            transition: box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+        .memo-item:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .memo-buttons {
+            text-align: right;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .memo-buttons.show {
+            display: block;
+            opacity: 1;
+        }
+        .memo-content-short {
+            display: block;
+        }
+        .memo-content-full {
+            display: none;
+        }
+        .btn-primary, .btn-danger, .btn-secondary {
+            border-radius: 20px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-primary:hover, .btn-danger:hover, .btn-secondary:hover {
+            transform: scale(1.05);
+        }
+        .btn-link {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .btn-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+        .edit-form {
+            margin-top: 1rem;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .icon {
+            font-size: 50px;
+            color: #007bff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .dark-mode {
+            background: linear-gradient(135deg, #1e272e, #485460);
+            color: #ecf0f1;
+        }
+        .dark-mode .card {
+            background-color: #2f3640;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        .dark-mode .memo-item {
+            background-color: #353b48;
+            border-color: #555;
+            color: #ecf0f1;
+        }
+        .dark-mode .btn-link {
+            color: #00a8ff;
+        }
+        .dark-mode .btn-link:hover {
+            color: #0097e6;
+        }
+        .dark-mode .icon {
+            color: #00a8ff;
+        }
+        .dark-mode .btn-primary {
+            background-color: #00a8ff;
+            border-color: #00a8ff;
+        }
+        .dark-mode .btn-primary:hover {
+            background-color: #0097e6;
+            border-color: #0097e6;
+        }
+        .dark-mode .btn-danger {
+            background-color: #e84118;
+            border-color: #e84118;
+        }
+        .dark-mode .btn-danger:hover {
+            background-color: #c23616;
+            border-color: #c23616;
+        }
+        .dark-mode .btn-secondary {
+            background-color: #718093;
+            border-color: #718093;
+        }
+        .dark-mode .btn-secondary:hover {
+            background-color: #57606f;
+            border-color: #57606f;
+        }
+    </style>
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('dark-mode', document.body.classList.contains('dark-mode'));
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('dark-mode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        function showEditForm(index) {
+            document.getElementById('edit-form-' + index).style.display = 'block';
+        }
+
+        function hideEditForm(index) {
+            document.getElementById('edit-form-' + index).style.display = 'none';
+        }
+
+        function toggleContentAndButtons(index) {
+            const shortContent = document.getElementById('short-content-' + index);
+            const fullContent = document.getElementById('full-content-' + index);
+            const buttons = document.getElementById('buttons-' + index);
+            const btn = document.getElementById('btn-' + index);
+
+            if (shortContent.style.display === 'none') {
+                shortContent.style.display = 'block';
+                fullContent.style.display = 'none';
+                buttons.classList.remove('show');
+                btn.textContent = '더보기';
+            } else {
+                shortContent.style.display = 'none';
+                fullContent.style.display = 'block';
+                buttons.classList.add('show');
+                btn.textContent = '접기';
+            }
+        }
+
+        function confirmDelete(form) {
+            if (confirm('정말 삭제하시겠습니까?')) {
+                form.submit();
+            }
+        }
+
+        function confirmDeleteAccount(form) {
+            if (confirm('정말 회원탈퇴 하시겠습니까?')) {
+                form.submit();
+            }
+        }
+
+        function autoResizeTextarea(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <div class="icon">📝</div>
+                        <h5 class="card-title">내 페이지</h5>
+                        <button class="btn btn-secondary btn-sm float-end" onclick="toggleDarkMode()">다크 모드</button>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="text-center">사용자 ID: <strong>{{ user_id }}</strong></h6>
+                        <hr>
+                        <h6>메모:</h6>
+                        <div class="memo-content">
+                            {% if memo %}
+                                <ul class="list-unstyled">
+                                    {% for m in memo %}
+                                        <li class="memo-item">
+                                            <strong>{{ m['index'] }}번째 메모</strong> ({{ m['timestamp'] }}):
+                                            <div id="short-content-{{ m['index'] }}" class="memo-content-short">{{ m['html_content'][:100]|safe }}...</div>
+                                            <div id="full-content-{{ m['index'] }}" class="memo-content-full">{{ m['html_content']|safe }}</div>
+                                            <button id="btn-{{ m['index'] }}" onclick="toggleContentAndButtons('{{ m['index'] }}')" class="btn btn-link btn-xs">더보기</button>
+                                            <div id="buttons-{{ m['index'] }}" class="memo-buttons">
+                                                <form method="POST" action="{{ url_for('delete_memo', index=m['index'] - 1) }}" style="display:inline;" onsubmit="event.preventDefault(); confirmDelete(this);">
+                                                    <button type="submit" class="btn btn-secondary btn-xs">삭제</button>
+                                                </form>
+                                                <button class="btn btn-secondary btn-xs" onclick="showEditForm('{{ m['index'] }}')">수정</button>
+                                            </div>
+                                            <div id="edit-form-{{ m['index'] }}" class="edit-form" style="display:none;">
+                                                <form method="POST" action="{{ url_for('edit_memo', index=m['index'] - 1) }}">
+                                                    <div class="mb-3">
+                                                        <textarea name="memo" class="form-control" rows="3" oninput="autoResizeTextarea(this)">{{ m['content'] }}</textarea>
+                                                    </div>
+                                                    <div class="text-center mt-3">
+                                                        <button type="submit" class="btn btn-primary btn-xs">저장</button>
+                                                        <button type="button" class="btn btn-secondary btn-xs" onclick="hideEditForm('{{ m['index'] }}')">취소</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                                <form method="POST" action="{{ url_for('delete_all_memos') }}" class="text-center mt-3" onsubmit="event.preventDefault(); confirmDelete(this);">
+                                    <button type="submit" class="btn btn-danger btn-sm">전체 삭제</button>
+                                </form>
+                            {% else %}
+                                <p class="text-center">메모가 없습니다.</p>
+                            {% endif %}
+                        </div>
+                        <form method="POST" action="/add_memo" class="mt-4">
+                            <div class="mb-3">
+                                <textarea name="memo" class="form-control" rows="3" placeholder="메모를 추가하세요..." oninput="autoResizeTextarea(this)"></textarea>
+                            </div>
+                            <div class="text-center mt-3">
+                                <button type="submit" class="btn btn-primary">메모 추가</button>
+                            </div>
+                        </form>
+                        <div class="action-buttons mt-3">
+                            <a href="/logout" class="btn btn-danger">로그아웃</a>
+                            <form method="POST" action="{{ url_for('delete_account') }}" onsubmit="event.preventDefault(); confirmDeleteAccount(this);">
+                                <button type="submit" class="btn btn-danger">회원탈퇴</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
