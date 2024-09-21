@@ -4,14 +4,13 @@ import os
 from datetime import datetime
 from typing import Any, Optional, Tuple, Union
 
-import markdown2  # type: ignore
+import markdown2
 import requests
 from dotenv import load_dotenv
 from flask import (Flask, Response, jsonify, redirect, render_template,
                    request, session, url_for)
 from werkzeug.security import check_password_hash, generate_password_hash
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
@@ -63,9 +62,7 @@ def main() -> Union[str, Response]:
                 session["user_id"] = user_id
                 response = redirect(url_for("mypage"))
                 if auto_login:
-                    response.set_cookie(
-                        "user_id", user_id, max_age=30 * 24 * 60 * 60
-                    )  # 30 days
+                    response.set_cookie("user_id", user_id, max_age=30 * 24 * 60 * 60)
                 logger.info(f"User {user_id} logged in successfully.")
                 return response
             error_message = "비밀번호가 잘못되었습니다."
