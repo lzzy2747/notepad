@@ -271,7 +271,9 @@ def mypage() -> str:
         user_data = json.loads(file.read())
 
     for memo in user_data.get("memo", []):
-        memo["html_content"] = markdown2.markdown(memo["content"], extras=["break-on-newline"])
+        memo["html_content"] = markdown2.markdown(
+            memo["content"], extras=["break-on-newline"]
+        )
 
     logger.info(f"User {user_id} accessed mypage.")
     return render_template("mypage.html", user_id=user_id, memo=user_data.get("memo"))
